@@ -72,6 +72,15 @@ value(int type)
     command |= ADCCON3_ECH3 | ADCCON3_ECH2 | ADCCON3_ECH1 | ADCCON3_ECH0;
     break;
 #endif
+  case ADC_SENSOR_TYPE_LIGHT:
+    command |= ADCCON3_ECH2 | ADCCON3_ECH1 | ADCCON3_ECH0;
+    APCFG |= LIGHT_SENSOR_PIN_MASK;
+    break;
+  case ADC_SENSOR_TYPE_VBAT:
+    command |= ADCCON3_ECH2 | ADCCON3_ECH0;
+    APCFG |= VBAT_SENSOR_PIN_MASK;
+    break;
+
   default:
     /* If the sensor is not present or disabled in conf, return -1 */
     return -1;
@@ -113,7 +122,7 @@ configure(int type, int value)
     ATEST = 1;
     TR0 = 1;
 #endif
-    APCFG = 0; /* Disables Input Channels */
+    //APCFG = 0; /* Disables Input Channels */
     break;
   }
   return 1;

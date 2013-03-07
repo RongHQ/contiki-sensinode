@@ -89,7 +89,7 @@ timeout_handler(void)
 
   /* evens / odds */
   if(seq_id & 0x01) {
-    this_conn = l_conn;
+    this_conn = g_conn;
   } else {
     this_conn = g_conn;
     if(uip_ds6_get_global(ADDR_PREFERRED) == NULL) {
@@ -117,8 +117,11 @@ PROCESS_THREAD(udp_client_process, ev, data)
   PROCESS_BEGIN();
   PRINTF("UDP client process started\n");
 
+  //uip_ip6addr(&ipaddr, 0xaaaa, 0, 0, 0, 0, 0, 0, 2); 
+  //uip_ds6_addr_add(&ipaddr, 0, ADDR_MANUAL);
+/*
   uip_ip6addr(&ipaddr,0xfe80,0,0,0,0x0215,0x2000,0x0002,0x2145);
-  /* new connection with remote host */
+  /* new connection with remote host 
   l_conn = udp_new(&ipaddr, UIP_HTONS(3000), NULL);
   if(!l_conn) {
     PRINTF("udp_new l_conn error.\n");
@@ -129,8 +132,8 @@ PROCESS_THREAD(udp_client_process, ev, data)
   PRINT6ADDR(&l_conn->ripaddr);
   PRINTF(" local/remote port %u/%u\n",
   UIP_HTONS(l_conn->lport), UIP_HTONS(l_conn->rport));
-
-  uip_ip6addr(&ipaddr,0xaaaa,0,0,0,0x0215,0x2000,0x0002,0x2145);
+*/
+  uip_ip6addr(&ipaddr,0xaaaa,0,0,0,0,0,0,1);
   g_conn = udp_new(&ipaddr, UIP_HTONS(3000), NULL);
   if(!g_conn) {
     PRINTF("udp_new g_conn error.\n");

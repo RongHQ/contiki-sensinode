@@ -72,4 +72,5 @@ uart0_writeb(uint8_t byte)
   while(!UTX0IF); /* Wait until byte has been transmitted. */
   UTX0IF = 0;
 }
+
 #endif

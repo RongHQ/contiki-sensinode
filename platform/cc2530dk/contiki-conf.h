@@ -60,7 +60,7 @@ typedef unsigned short clock_time_t;
 #undef UART0_CONF_ENABLE
 #undef UART0_CONF_WITH_INPUT
 #define UART0_CONF_ENABLE  1
-#define UART0_CONF_WITH_INPUT 1
+#define UART0_CONF_WITH_INPUT 0
 #define UIP_FALLBACK_INTERFACE slip_interface
 #endif
 
@@ -102,7 +102,7 @@ typedef unsigned short clock_time_t;
 #ifndef ADC_SENSOR_CONF_ON
 #define ADC_SENSOR_CONF_ON      1
 #endif
-#define TEMP_SENSOR_CONF_ON     1  /* Temperature */
+#define TEMP_SENSOR_CONF_ON     0  /* Temperature */
 #define VDD_SENSOR_CONF_ON      1  /* Supply Voltage */
 #define BATTERY_SENSOR_CONF_ON  0  /* Battery */
 
@@ -157,7 +157,7 @@ typedef unsigned short clock_time_t;
 #define IEEE802154_CONF_PANID 0x5449 /* TI */
 
 #ifndef CC2530_RF_CONF_CHANNEL
-#define CC2530_RF_CONF_CHANNEL    25
+#define CC2530_RF_CONF_CHANNEL    26
 #endif /* CC2530_RF_CONF_CHANNEL */
 
 #ifndef CC2530_RF_CONF_AUTOACK
@@ -192,10 +192,10 @@ typedef unsigned short clock_time_t;
 #define UIP_CONF_ND6_RETRANS_TIMER       10000
 
 #ifndef UIP_CONF_DS6_NBR_NBU
-#define UIP_CONF_DS6_NBR_NBU                 4 /* Handle n Neighbors */
+#define UIP_CONF_DS6_NBR_NBU                 8 /* Handle n Neighbors */
 #endif
 #ifndef UIP_CONF_DS6_ROUTE_NBU
-#define UIP_CONF_DS6_ROUTE_NBU               4 /* Handle n Routes */
+#define UIP_CONF_DS6_ROUTE_NBU               8 /* Handle n Routes */
 #endif
 
 /* uIP */

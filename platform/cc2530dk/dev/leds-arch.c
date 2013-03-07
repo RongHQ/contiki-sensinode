@@ -44,27 +44,29 @@
 /*
  * LEDS
  *  1: P1_0
- *  2: P1_1
- *  3: P1_4
+ *  2: P2_0
+ *  3: P1_1
  *  4: P0_1 (LED4 shares port/pin with B1 and is currently unused)
  */
 
 /* H/W Connections */
 #define LED1_PIN P1_0
-#define LED2_PIN P1_1
-#define LED3_PIN P1_4
+#define LED2_PIN P2_0
+#define LED3_PIN P1_1
 
 /* P0DIR and P0SEL masks */
 #define LED1_MASK  0x01
 #define LED2_MASK  0x02
-#define LED3_MASK  0x10
+#define LED3_MASK  0x01
 #define LED4_MASK  0x02
 /*---------------------------------------------------------------------------*/
 void
 leds_arch_init(void)
 {
-  P1SEL &= ~(LED1_MASK | LED2_MASK | LED3_MASK);
-  P1DIR |= (LED1_MASK | LED2_MASK | LED3_MASK);
+	 P1SEL &= ~(LED1_MASK | LED2_MASK);
+	 P1DIR |= (LED1_MASK | LED2_MASK );
+	 P2SEL &= ~(LED3_MASK);
+	 P2DIR |= (LED3_MASK);
 }
 /*---------------------------------------------------------------------------*/
 unsigned char
@@ -80,8 +82,16 @@ leds_arch_get(void)
 void
 leds_arch_set(unsigned char leds)
 {
-  LED1_PIN = leds & 0x01;
-  LED2_PIN = (leds & 0x02) >> 1;
-  LED3_PIN = (leds & 0x04) >> 2;
+	char temp;
+	  temp = (leds & 0x01)^ 0x01;
+	  LED1_PIN = temp;
+	#if MODEL_CC2531
+	  LED2_PIN = ((leds & 0x02) >> 1) ^ 0x01;
+	#else
+	  temp = ((leds & 0x02) >> 1)^ 0x01;
+	  LED2_PIN = temp;
+	  temp = ((leds & 0x04) >> 2)^ 0x01;
+	  LED3_PIN = temp;
+	#endif
 }
 /*---------------------------------------------------------------------------*/

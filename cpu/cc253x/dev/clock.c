@@ -69,6 +69,19 @@ clock_delay(unsigned int len)
 }
 /*---------------------------------------------------------------------------*/
 /**
+* Each iteration is ~1.0xy usec, so this function delays for roughly len usec
+*/
+void
+clock_delay_usec(uint16_t len)
+{
+   DISABLE_INTERRUPTS();
+   while(len--) {
+     ASM(nop);
+   }
+   ENABLE_INTERRUPTS();
+}
+/*---------------------------------------------------------------------------*/
+/**
  * Wait for a multiple of ~8 ms (a tick)
  */
 void

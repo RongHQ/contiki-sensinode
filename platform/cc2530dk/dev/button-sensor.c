@@ -36,12 +36,16 @@
 #include "dev/button-sensor.h"
 /*---------------------------------------------------------------------------*/
 #if BUTTON_SENSOR_ON
-static __data struct timer debouncetimer;
+static __data struct timer debouncetimer[3];
+static __data unsigned char button_status=0;
 /*---------------------------------------------------------------------------*/
 static
 int value(int type)
 {
-  return BUTTON_READ() || !timer_expired(&debouncetimer);
+  unsigned char temp;
+  temp = button_status;
+  button_status = 0;
+  return (int)temp;
 }
 /*---------------------------------------------------------------------------*/
 static
@@ -50,7 +54,9 @@ int status(int type)
   switch (type) {
   case SENSORS_ACTIVE:
   case SENSORS_READY:
-    return BUTTON_IRQ_ENABLED();
+    return ((BUTTON_IRQ_ENABLED())||
+  		  (BUTTON2_IRQ_ENABLED())<<1||
+  		  (BUTTON_IR_IRQ_ENABLED())<<2);
     }
   return 0;
 }
@@ -62,18 +68,38 @@ int configure(int type, int value)
   case SENSORS_HW_INIT:
     P0INP |= 2; /* Tri-state */
     BUTTON_IRQ_ON_PRESS();
+    //BUTTON2_IRQ_ON_PRESS();
+    //BUTTON_IR_IRQ_ON_PRESS();
+
     BUTTON_FUNC_GPIO();
+    BUTTON2_FUNC_GPIO();
+    BUTTON_IR_FUNC_GPIO();
+
     BUTTON_DIR_INPUT();
+    BUTTON2_DIR_INPUT();
+    BUTTON_IR_DIR_INPUT();
     return 1;
   case SENSORS_ACTIVE:
     if(value) {
       if(!BUTTON_IRQ_ENABLED()) {
-        timer_set(&debouncetimer, 0);
+        timer_set(&debouncetimer[0], 0);
         BUTTON_IRQ_FLAG_OFF();
         BUTTON_IRQ_ENABLE();
       }
+      if(!BUTTON2_IRQ_ENABLED()) {
+        timer_set(&debouncetimer[1], 0);
+        BUTTON2_IRQ_FLAG_OFF();
+        BUTTON2_IRQ_ENABLE();
+      }
+      if(!BUTTON_IR_IRQ_ENABLED()) {
+        timer_set(&debouncetimer[2], 0);
+        BUTTON_IR_IRQ_FLAG_OFF();
+        BUTTON_IR_IRQ_ENABLE();
+      }
     } else {
       BUTTON_IRQ_DISABLE();
+      BUTTON2_IRQ_DISABLE();
+      BUTTON_IR_IRQ_DISABLE();
     }
     return 1;
   }
@@ -89,13 +115,30 @@ port_0_isr(void) __interrupt(P0INT_VECTOR)
   /* This ISR is for the entire port. Check if the interrupt was caused by our
    * button's pin. */
   if(BUTTON_IRQ_CHECK()) {
-    if(timer_expired(&debouncetimer)) {
-      timer_set(&debouncetimer, CLOCK_SECOND / 8);
+    if(timer_expired(&debouncetimer[0])) {
+      timer_set(&debouncetimer[0], CLOCK_SECOND / 4);
+      button_status |= BUTTON_MASK;
       sensors_changed(&button_sensor);
     }
+    BUTTON_IRQ_FLAG_OFF();
   }
+  if(BUTTON2_IRQ_CHECK()) {
+      if(timer_expired(&debouncetimer[1])) {
+        timer_set(&debouncetimer[1], CLOCK_SECOND / 4);
+        button_status |= BUTTON2_MASK;
+        sensors_changed(&button_sensor);
+      }
+      BUTTON2_IRQ_FLAG_OFF();
+    }
+  if(BUTTON_IR_IRQ_CHECK()) {
+      if(timer_expired(&debouncetimer[2])) {
+        timer_set(&debouncetimer[2], CLOCK_SECOND / 4);
+        button_status |= BUTTON_IR_MASK;
+        sensors_changed(&button_sensor);
+      }
+      BUTTON_IR_IRQ_FLAG_OFF();
+    }
 
-  BUTTON_IRQ_FLAG_OFF();
 
   ENERGEST_OFF(ENERGEST_TYPE_IRQ);
   EA = 1;

@@ -91,6 +91,8 @@ void clock_init(void);
 CCIF clock_time_t clock_time(void);
 
 void clock_delay(unsigned int);
+void clock_delay_usec(uint16_t len);
+void clock_wait(int i);
 
 /**
  * A second, measured in system clock time.

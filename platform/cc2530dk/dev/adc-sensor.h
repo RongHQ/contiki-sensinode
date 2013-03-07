@@ -52,10 +52,15 @@
 
 #define ADC_SENSOR_TYPE_TEMP    0
 #define ADC_SENSOR_TYPE_VDD     4
+#define ADC_SENSOR_TYPE_LIGHT   8
+#define ADC_SENSOR_TYPE_VBAT    16
 
 #ifdef ADC_SENSOR_CONF_ON
 #define ADC_SENSOR_ON ADC_SENSOR_CONF_ON
 #endif /* ADC_SENSOR_CONF_ON */
+
+#define LIGHT_SENSOR_PIN_MASK   0x80
+#define VBAT_SENSOR_PIN_MASK    0x20
 
 #if ADC_SENSOR_ON
 extern const struct sensors_sensor adc_sensor;
