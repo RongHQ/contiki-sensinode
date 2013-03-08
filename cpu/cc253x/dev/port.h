@@ -67,8 +67,8 @@
 /*---------------------------------------------------------------------------*/
 #define PORT_FUNC_GPIO_X(port,pin)     do { P##port##SEL &= ~(1 << pin); } while(0)
 #define PORT_FUNC_PER_X(port,pin)      do { P##port##SEL |= 1 << pin; } while(0)
-#define PORT0_ANALOG_IO_X(port,pin)    do { APCFG |= 1 << pin; } while(0)
-#define PORT0_DIGITAL_IO_X(port,pin)   do { APCFG &= ~(1 << pin); } while(0)
+#define PORT0_ANALOG_IO_X(pin)    do { APCFG |= 1 << pin; } while(0)
+#define PORT0_DIGITAL_IO_X(pin)   do { APCFG &= ~(1 << pin); } while(0)
 #define PORT_SET_X(port,pin)           do { P##port##_##pin = 1; } while(0)
 #define PORT_CLEAR_X(port,pin)         do { P##port##_##pin = 0; } while(0)
 #define PORT_TOGGLE_X(port,pin)        do { P##port##_##pin ^= 1; } while(0)

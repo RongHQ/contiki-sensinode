@@ -58,6 +58,10 @@ static unsigned long irq_energest = 0;
 #define ENERGEST_IRQ_SAVE(a) do {} while(0)
 #define ENERGEST_IRQ_RESTORE(a) do {} while(0)
 #endif
+
+process_event_t ADC_sensor_event;
+CCIF extern struct process hello_world_process;
+
 /*---------------------------------------------------------------------------*/
 static void
 fade(int l) CC_NON_BANKED
@@ -170,6 +174,9 @@ main(void) CC_NON_BANKED
   io_arch_set_input(serial_line_input_byte);
   serial_line_init();
 #endif
+
+  ADC_sensor_event = process_alloc_event();
+
   fade(LEDS_RED);
 
   PUTSTRING("##########################################\n");
@@ -240,7 +247,7 @@ main(void) CC_NON_BANKED
 #if BUTTON_SENSOR_ON || ADC_SENSOR_ON
   process_start(&sensors_process, NULL);
   BUTTON_SENSOR_ACTIVATE();
-  ADC_SENSOR_ACTIVATE();
+  //ADC_SENSOR_ACTIVATE();
 #endif
 
 #if UIP_CONF_IPV6
@@ -267,6 +274,10 @@ main(void) CC_NON_BANKED
     do {
       /* Reset watchdog and handle polls and events */
       watchdog_periodic();
+
+      if((ADCCON1&ADCCON1_EOC)){
+    	  process_post_synch(&hello_world_process, ADC_sensor_event, NULL);
+      }
 
 #if CLOCK_CONF_STACK_FRIENDLY
       if(sleep_flag) {

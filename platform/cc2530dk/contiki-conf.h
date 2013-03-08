@@ -50,11 +50,11 @@
 #define UART0_CONF_ENABLE  1
 #endif
 #ifndef UART0_CONF_WITH_INPUT
-#define UART0_CONF_WITH_INPUT 0
+#define UART0_CONF_WITH_INPUT 1
 #endif
 
 #ifndef UART0_CONF_HIGH_SPEED
-#define UART0_CONF_HIGH_SPEED 0
+#define UART0_CONF_HIGH_SPEED 1
 #endif
 
 /* USB output buffering enabled by default (relevant to cc2531 builds only) */

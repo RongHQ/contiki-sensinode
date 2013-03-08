@@ -39,6 +39,7 @@
 #include "sfr-bits.h"
 #include "cc253x.h"
 #include "adc-sensor.h"
+#include "dev/port.h"
 
 #if ADC_SENSOR_ON
 /*---------------------------------------------------------------------------*/
@@ -115,6 +116,12 @@ configure(int type, int value)
 #endif
     APCFG = 0; /* Disables Input Channels */
     break;
+
+  case SENSORS_ACTIVE:
+	PORT0_ANALOG_IO(6);
+	ADCCON2 = 0x37;
+	ADCCON1 = 0x13;
+	break;
   }
   return 1;
 }

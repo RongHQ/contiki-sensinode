@@ -60,15 +60,17 @@ uart0_init()
   UART0_RX_EN();
 
   UART0_RX_INT(1);
+
+  UTX0IF = 0;
+  U0DBUF = 0xff;
 }
 /*---------------------------------------------------------------------------*/
 /* Write one byte over the UART. */
 void
 uart0_writeb(uint8_t byte)
 {
-  UTX0IF = 0;
-  U0DBUF = byte;
   while(!UTX0IF); /* Wait until byte has been transmitted. */
   UTX0IF = 0;
+  U0DBUF = byte;
 }
 #endif
