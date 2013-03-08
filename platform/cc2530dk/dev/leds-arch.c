@@ -68,11 +68,11 @@ leds_arch_get(void)
 void
 leds_arch_set(unsigned char leds)
 {
-  LED1_PIN = leds & 0x01;
+  LED1_PIN = (leds & 0x01) ^ 0x01;
 #if MODEL_CC2531
   LED2_PIN = ((leds & 0x02) >> 1) ^ 0x01;
 #else
-  LED2_PIN = (leds & 0x02) >> 1;
+  LED2_PIN = ((leds & 0x02) >> 1) ^ 0x01;
   LED3_PIN = (leds & 0x04) >> 2;
 #endif
 }

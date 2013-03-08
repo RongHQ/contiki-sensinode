@@ -95,8 +95,8 @@
 #define LED1_MASK  0x02
 #else
 #define MODEL_STRING "TI SmartRF05 EB\n"
-#define LEDS_GREEN    1
-#define LEDS_RED      2
+#define LEDS_GREEN    2
+#define LEDS_RED      1
 
 /* H/W Connections */
 #define LED1_PIN   P1_0
