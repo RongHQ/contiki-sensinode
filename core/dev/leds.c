@@ -93,6 +93,7 @@ void
 leds_on(unsigned char ledv)
 {
   unsigned char changed;
+  invert &= ~ledv;
   changed = (~leds) & ledv;
   leds |= ledv;
   show_leds(changed);
@@ -102,6 +103,7 @@ void
 leds_off(unsigned char ledv)
 {
   unsigned char changed;
+  invert &= ~ledv;
   changed = leds & ledv;
   leds &= ~ledv;
   show_leds(changed);
