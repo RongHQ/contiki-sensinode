@@ -59,7 +59,7 @@ static unsigned long irq_energest = 0;
 #define ENERGEST_IRQ_RESTORE(a) do {} while(0)
 #endif
 
-process_event_t ADC_sensor_event;
+//process_event_t ADC_sensor_event;
 CCIF extern struct process hello_world_process;
 
 /*---------------------------------------------------------------------------*/
@@ -175,7 +175,7 @@ main(void) CC_NON_BANKED
   serial_line_init();
 #endif
 
-  ADC_sensor_event = process_alloc_event();
+//  ADC_sensor_event = process_alloc_event();
 
   fade(LEDS_RED);
 
@@ -275,9 +275,10 @@ main(void) CC_NON_BANKED
       /* Reset watchdog and handle polls and events */
       watchdog_periodic();
 
-      if((ADCCON1&ADCCON1_EOC)){
-    	  process_post_synch(&hello_world_process, ADC_sensor_event, NULL);
-      }
+//      if((ADCCON1&ADCCON1_EOC)){
+//    	  process_post_synch(&hello_world_process, ADC_sensor_event, NULL);
+//   	  leds_toggle(LEDS_RED);
+//      }
 
 #if CLOCK_CONF_STACK_FRIENDLY
       if(sleep_flag) {

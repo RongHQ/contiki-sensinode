@@ -14,6 +14,7 @@
 
 #include "dev/dma.h"
 #include "cc253x.h"
+#include "dev/leds.h"
 
 #if DMA_ON
 extern struct process *dma_callback[DMA_CHANNEL_COUNT];
@@ -62,6 +63,14 @@ dma_isr(void) __interrupt(DMA_VECTOR)
   for(i = 0; i < DMA_CHANNEL_COUNT; i++) {
     if((DMAIRQ & (1 << i)) != 0) {
       DMAIRQ = ~(1 << i);
+
+      if(i == 1){
+    	  DMA_ARM(0);
+      }
+      if(i == 0){
+    	  DMA_ARM(1);
+      }
+
       if(dma_callback[i] != 0) {
         process_poll(dma_callback[i]);
       }

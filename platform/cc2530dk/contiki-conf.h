@@ -140,7 +140,7 @@
 
 /* DMA Configuration */
 #ifndef DMA_CONF_ON
-#define DMA_CONF_ON 0
+#define DMA_CONF_ON 1
 #endif
 
 /* Viztool on by default for IPv6 builds */

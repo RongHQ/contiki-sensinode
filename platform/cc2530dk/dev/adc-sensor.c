@@ -119,7 +119,7 @@ configure(int type, int value)
 
   case SENSORS_ACTIVE:
 	PORT0_ANALOG_IO(6);
-	ADCCON2 = 0x37;
+	ADCCON2 = 0xB6;
 	ADCCON1 = 0x13;
 	break;
   }

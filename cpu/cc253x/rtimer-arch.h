@@ -53,8 +53,8 @@
  */
 #define RTIMER_ARCH_SECOND (15625U)
 
-#define rtimer_arch_now() (T1CNTL + (T1CNTH << 8))
+#define rtimer_arch_now() ((T2M0 & 0x00) + T2MOVF0 + (T2MOVF1 << 8))
 
-void rtimer_isr(void) __interrupt(T1_VECTOR);
+void rtimer_isr(void) __interrupt(T2_VECTOR);
 
 #endif /* __RTIMER_ARCH_H__ */

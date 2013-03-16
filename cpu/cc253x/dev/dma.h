@@ -87,7 +87,7 @@
 #define DMA_SRC_INC_2        0x80 /* Source Increment 2 */
 #define DMA_SRC_DEC          0xC0 /* Source Decrement 1 */
 /* Source Increment Modes (Byte 7 [5:4])*/
-#define DMA_DST_INC_NO       0x00 /* DestinationNo increment */
+#define DMA_DST_INC_NO       0x00 /* Destination No increment */
 #define DMA_DST_INC_1        0x10 /* Destination Increment 1 */
 #define DMA_DST_INC_2        0x20 /* Destination Increment 2 */
 #define DMA_DST_DEC          0x30 /* Destination Decrement 1 */
@@ -95,7 +95,7 @@
 /* Descriptor Byte 7, Bits[3:0] */
 #define DMA_IRQ_MASK_ENABLE  0x08
 #define DMA_MODE_7_BIT       0x04
-#define DMA_PRIO_HIGHEST     0x03
+#define DMA_PRIO_HIGHEST     0x03 /*RESERVED*/
 #define DMA_PRIO_HIGH        0x02
 #define DMA_PRIO_GUARANTEED  0x01
 #define DMA_PRIO_LOW         0x00
@@ -121,7 +121,7 @@ typedef struct dma_config {
 
 /* Number of DMA Channels and their Descriptors */
 #if DMA_ON
-#define DMA_CHANNEL_COUNT 2
+#define DMA_CHANNEL_COUNT 3
 extern dma_config_t dma_conf[DMA_CHANNEL_COUNT];
 #endif
 

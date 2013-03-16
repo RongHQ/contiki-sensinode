@@ -14,6 +14,7 @@
 #include "cc253x.h"
 #include "sfr-bits.h"
 #include "dev/uart0.h"
+#include "sys/clock.h"
 
 #if UART0_ENABLE
 /*---------------------------------------------------------------------------*/
@@ -27,7 +28,7 @@ uart0_init()
 #endif
 
 #ifdef UART0_ALTERNATIVE_2
-  PERCFG |= PERCFG_U0CFG;  / *alternative port 2 = P1.5-2 */
+  PERCFG |= PERCFG_U0CFG;  /* alternative port 2 = P1.5-2 */
 #ifdef UART0_RTSCTS
   P1SEL |= 0x3C;    /* peripheral select for TX and RX, RTS, CTS */
 #else
@@ -44,6 +45,7 @@ uart0_init()
   P0SEL |= 0x0C;    /* peripheral select for TX and RX */
   P0 &= ~0x20;    /* RTS down */
 #endif
+  P0 |= 0x08;
   P0DIR |= 0x28;    /* RTS, TX out */
   P0DIR &= ~0x14;   /* CTS, RX in */
 #endif
@@ -52,7 +54,7 @@ uart0_init()
 #ifdef UART0_RTSCTS
   U0UCR = 0x42; /*defaults: 8N1, RTS/CTS, high stop bit*/
 #else
-  U0UCR = 0x02; /*defaults: 8N1, no flow control, high stop bit*/
+  U0UCR = 0x06; /*defaults: 8N1, no flow control, two stop bits, high stop bit*/
 #endif
 
   U0CSR = UCSR_MODE; /* UART mode */
@@ -62,7 +64,9 @@ uart0_init()
   UART0_RX_INT(1);
 
   UTX0IF = 0;
-  U0DBUF = 0xff;
+  clock_wait(1);
+  U0DBUF = 0x00;
+  while(!UTX0IF);
 }
 /*---------------------------------------------------------------------------*/
 /* Write one byte over the UART. */

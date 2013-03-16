@@ -61,39 +61,36 @@
 void
 rtimer_arch_init(void)
 {
-  /*
-   * - Free running mode
-   * - Prescale by 32:
-   *   Tick Speed has been prescaled to 500 kHz already in clock_init()
-   *   We further prescale by 32 resulting in 15625 Hz for this timer.
-   */
-  T1CTL = (T1CTL_DIV1 | T1CTL_MODE0);
+  T2MSEL = 0x02;
+  T2M0 = 0x00;
+  T2M1 = 0x08;
+  T2MSEL = 0x00;
 
-  T1STAT = 0;
-
-  /* Timer 1, Channel 1. Compare Mode (0x04), Interrupt mask on (0x40) */
-  T1CCTL1 = T1CCTL_MODE | T1CCTL_IM;
-
-  /* Interrupt Mask Flags: No interrupt on overflow */
-  OVFIM = 0;
-
-  /* Acknowledge Timer 1 Interrupts */
-  T1IE = 1;
+  T2CTRL = 0x09;
+  T2IRQF = 0x00;
+  T2IRQM = 0x00;
+  T2IE = 1;
 }
 /*---------------------------------------------------------------------------*/
 void
 rtimer_arch_schedule(rtimer_clock_t t)
 {
-  /* Switch to capture mode before writing T1CC1x and
-   * set the compare mode values so we can get an interrupt after t */
-  RT_MODE_CAPTURE();
-  T1CC1L = (unsigned char)t;
-  T1CC1H = (unsigned char)(t >> 8);
-  RT_MODE_COMPARE();
+  static uint8_t T2OVF2TEMP;
 
-  /* Turn on compare mode interrupt */
-  T1STAT = 0;
-  T1CCTL1 |= T1CCTL_IM;
+  T2M0;
+  T2OVF2TEMP = T2MOVF2;
+  if((T2MOVF1 << 8 | T2MOVF0) > t){
+	  T2OVF2TEMP++;
+  }
+
+  T2MSEL = 0x30;
+  T2MOVF0 = (uint8_t)t;
+  T2MOVF1 = (uint8_t)(t >> 8);
+  T2MOVF2 = T2OVF2TEMP;
+  T2MSEL = 0x00;
+
+  T2IRQF = 0x00;
+  T2IRQM = 0x10;
 }
 /*---------------------------------------------------------------------------*/
 /* avoid referencing bits, we don't call code which use them */
@@ -102,18 +99,18 @@ rtimer_arch_schedule(rtimer_clock_t t)
 #pragma exclude bits
 #endif
 void
-rtimer_isr(void) __interrupt(T1_VECTOR)
+rtimer_isr(void) __interrupt(T2_VECTOR)
 {
-  T1IE = 0; /* Ignore Timer 1 Interrupts */
+  T2IE = 0; /* Ignore Timer 2 Interrupts */
   ENERGEST_ON(ENERGEST_TYPE_IRQ);
 
   /* No more interrupts from Channel 1 till next rtimer_arch_schedule() call */
-  T1STAT &= ~T1STAT_CH1IF;
-  T1CCTL1 &= ~T1CCTL_IM;
+  T2IRQF = 0x00;
+  T2IRQM = 0x00;
 
   rtimer_run_next();
 
   ENERGEST_OFF(ENERGEST_TYPE_IRQ);
-  T1IE = 1; /* Acknowledge Timer 1 Interrupts */
+  T2IE = 1; /* Acknowledge Timer 1 Interrupts */
 }
 #pragma restore

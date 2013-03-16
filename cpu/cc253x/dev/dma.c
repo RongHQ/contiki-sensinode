@@ -24,7 +24,7 @@ dma_init(void)
 {
   uint16_t tmp_ptr;
 
-  memset(dma_conf, 0, 4 * sizeof(dma_config_t));
+  memset(dma_conf, 0, DMA_CHANNEL_COUNT * sizeof(dma_config_t));
 
   for(tmp_ptr = 0; tmp_ptr < DMA_CHANNEL_COUNT; tmp_ptr++) {
     dma_callback[tmp_ptr] = 0;
@@ -56,12 +56,12 @@ dma_init(void)
 void
 dma_associate_process(struct process *p, uint8_t c)
 {
-  if((!c) || (c >= DMA_CHANNEL_COUNT)) {
+  if(c >= DMA_CHANNEL_COUNT) {
     return;
   }
 
   if(p) {
-    dma_conf[c].inc_prio |= 8; /* Enable interrupt generation */
+    dma_conf[c].inc_prio |= DMA_IRQ_MASK_ENABLE; /* Enable interrupt generation */
     DMAIE = 1; /* Make sure DMA interrupts are acknowledged */
   }
   dma_callback[c] = p;

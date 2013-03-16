@@ -82,7 +82,7 @@ PROCESS_THREAD(clock_test_process, ev, data)
 #if TEST_RTIMER
   printf("Rtimer Test, 1 sec (%u rtimer ticks):\n", RTIMER_SECOND);
   i = 0;
-  while(i < 5) {
+  while(i <= 255) {
     etimer_set(&et, 2 * CLOCK_SECOND);
     printf("=======================\n");
     ct = clock_time();

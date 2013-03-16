@@ -43,7 +43,7 @@
 #include "cc253x.h"
 #include "sys/energest.h"
 
-/* Sleep timer runs on the 32k RC osc. */
+/* Sleep timer runs on the 32k X!RC osc. */
 /* One clock tick is 7.8 ms */
 #define TICK_VAL (32768/128)  /* 256 */
 /*---------------------------------------------------------------------------*/
@@ -111,12 +111,16 @@ clock_init(void)
   /* Make sure we know where we stand */
   CLKCONCMD = CLKCONCMD_OSC32K | CLKCONCMD_OSC;
 
-  /* Stay with 32 KHz RC OSC, Chance System Clock to 32 MHz */
-  CLKCONCMD &= ~CLKCONCMD_OSC;
-  while(CLKCONSTA & CLKCONCMD_OSC);
+  /*Change to 32 KHz XOSC before switching to 32M System clock*/
+  CLKCONCMD &= ~CLKCONCMD_OSC32K;
+  while(CLKCONSTA & CLKCONCMD_OSC32K);
 
-  /* Tickspeed 500 kHz for timers[1-4] */
-  CLKCONCMD |= CLKCONCMD_TICKSPD2 | CLKCONCMD_TICKSPD1;
+  /* !Stay with 32 KHz RC OSC, Chance System Clock to 32 MHz */
+  CLKCONCMD &= ~CLKCONCMD_OSC;
+  //while(CLKCONSTA & CLKCONCMD_OSC);
+
+  /* Tickspeed 32MHz !500 kHz for timers[1-4] */
+  //CLKCONCMD |= CLKCONCMD_TICKSPD2 | CLKCONCMD_TICKSPD1;
   while(CLKCONSTA != CLKCONCMD);
 
   /* Initialize tick value */
