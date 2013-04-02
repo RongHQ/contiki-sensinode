@@ -10,6 +10,8 @@
 #include "dev/adc-sensor.h"
 #include "dev/leds.h"
 #include "dev/dma.h"
+#include "contiki-lib.h"
+#include "contiki-net.h"
 //#include "dev/leds-arch.h"
 #include <stdio.h> /* For printf() */
 /*---------------------------------------------------------------------------*/

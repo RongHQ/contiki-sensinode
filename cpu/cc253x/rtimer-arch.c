@@ -59,13 +59,13 @@
 #define RT_MODE_CAPTURE() do { T1CCTL1 &= ~T1CCTL_MODE; } while(0)
 /*---------------------------------------------------------------------------*/
 void
-rtimer_arch_init(void)
-{
+rtimer_arch_init(void) {
+  DISABLE_INTERRUPTS();
   T2MSEL = 0x02;
   T2M0 = 0x00;
   T2M1 = 0x08;
   T2MSEL = 0x00;
-
+  ENABLE_INTERRUPTS();
   T2CTRL = 0x09;
   T2IRQF = 0x00;
   T2IRQM = 0x00;
@@ -73,22 +73,21 @@ rtimer_arch_init(void)
 }
 /*---------------------------------------------------------------------------*/
 void
-rtimer_arch_schedule(rtimer_clock_t t)
-{
+rtimer_arch_schedule(rtimer_clock_t t) {
   static uint8_t T2OVF2TEMP;
 
   T2M0;
   T2OVF2TEMP = T2MOVF2;
-  if((T2MOVF1 << 8 | T2MOVF0) > t){
-	  T2OVF2TEMP++;
+  if ((T2MOVF1 << 8 | T2MOVF0) > t) {
+    T2OVF2TEMP++;
   }
-
+  DISABLE_INTERRUPTS();
   T2MSEL = 0x30;
-  T2MOVF0 = (uint8_t)t;
-  T2MOVF1 = (uint8_t)(t >> 8);
+  T2MOVF0 = (uint8_t) t;
+  T2MOVF1 = (uint8_t) (t >> 8);
   T2MOVF2 = T2OVF2TEMP;
   T2MSEL = 0x00;
-
+  ENABLE_INTERRUPTS();
   T2IRQF = 0x00;
   T2IRQM = 0x10;
 }
@@ -99,8 +98,7 @@ rtimer_arch_schedule(rtimer_clock_t t)
 #pragma exclude bits
 #endif
 void
-rtimer_isr(void) __interrupt(T2_VECTOR)
-{
+rtimer_isr(void) __interrupt(T2_VECTOR) {
   T2IE = 0; /* Ignore Timer 2 Interrupts */
   ENERGEST_ON(ENERGEST_TYPE_IRQ);
 

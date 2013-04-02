@@ -79,8 +79,8 @@
 
 #if CC2530_RF_CONF_HEXDUMP
 /* We need UART1 output */
-#undef UART_ZERO_CONF_ENABLE
-#define UART_ZERO_CONF_ENABLE   1
+#undef UART0_CONF_ENABLE
+#define UART0_CONF_ENABLE   1
 #endif
 
 /* Code Shortcuts */
