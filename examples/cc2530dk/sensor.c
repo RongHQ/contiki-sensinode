@@ -24,7 +24,6 @@ const rimeaddr_t sink_addr = {{26, 51}};
 //extern process_event_t ADC_sensor_event;
 static struct etimer timer1;
 static uint8_t sample_count = 0;
-extern uint8_t DMA_sample_count;
 static uint16_t max_tstamp = 0;
 static int16_t sample_max = 0xFFFF;
 int16_t ADC_buffer_ping[256], ADC_buffer_pang[256];

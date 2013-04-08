@@ -18,7 +18,7 @@
 
 #if DMA_ON
 extern struct process *dma_callback[DMA_CHANNEL_COUNT];
-uint8_t DMA_sample_count = 0;
+volatile uint8_t DMA_sample_count = 0;
 volatile uint32_t DMA_t2cap = 0xFFFFFFFF;
 #endif
 
