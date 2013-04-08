@@ -82,14 +82,14 @@ struct mac_driver {
 /* Generic MAC return values. */
 enum {
   /**< The MAC layer transmission was OK. */
-  MAC_TX_OK,
+  MAC_TX_OK = 1,
 
   /**< The MAC layer transmission could not be performed due to a
      collision. */
-  MAC_TX_COLLISION,
+  MAC_TX_COLLISION = 0,
 
   /**< The MAC layer did not get an acknowledgement for the packet. */
-  MAC_TX_NOACK,
+  MAC_TX_NOACK = 2,
 
   /**< The MAC layer deferred the transmission for a later time. */
   MAC_TX_DEFERRED,

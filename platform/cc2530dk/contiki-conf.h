@@ -163,6 +163,7 @@
 
 #ifndef NETSTACK_CONF_RDC
 #define NETSTACK_CONF_RDC     nullrdc_driver
+#define NULLRDC_CONF_ADDRESS_FILTER 0
 #define NULLRDC_802154_AUTOACK 1
 #define NULLRDC_802154_AUTOACK_HW 1
 #endif
@@ -172,6 +173,7 @@
 #endif
 
 #define NETSTACK_CONF_FRAMER  framer_802154
+//#define NETSTACK_CONF_MAC_SEQNO_HISTORY 8
 #define NETSTACK_CONF_RADIO   cc2530_rf_driver
 
 /* RF Config */

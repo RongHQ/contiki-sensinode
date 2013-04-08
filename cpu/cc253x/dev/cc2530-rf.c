@@ -171,6 +171,9 @@ init(void)
     return 0;
   }
 
+  MDMCTRL0 = 0xC4;
+  MDMCTRL1 = 0x14;
+
 #if CC2530_RF_LOW_POWER_RX
   /* Reduce RX power consumption current to 20mA at the cost of sensitivity */
   RXCTRL = 0x00;

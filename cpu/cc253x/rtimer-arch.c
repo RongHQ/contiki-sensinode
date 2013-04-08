@@ -62,7 +62,7 @@ void
 rtimer_arch_init(void) {
   DISABLE_INTERRUPTS();
   T2MSEL = 0x02;
-  T2M0 = 0x00;
+  T2M0 = 0x40;
   T2M1 = 0x08;
   T2MSEL = 0x00;
   ENABLE_INTERRUPTS();

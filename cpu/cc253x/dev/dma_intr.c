@@ -18,6 +18,8 @@
 
 #if DMA_ON
 extern struct process *dma_callback[DMA_CHANNEL_COUNT];
+uint8_t DMA_sample_count = 0;
+volatile uint32_t DMA_t2cap = 0xFFFFFFFF;
 #endif
 
 /*---------------------------------------------------------------------------*/
@@ -39,7 +41,8 @@ extern void spi_rx_dma_callback(void);
 #pragma exclude bits
 #endif
 void
-dma_isr(void) __interrupt(DMA_VECTOR)
+dma_isr(void)
+__interrupt(DMA_VECTOR)
 {
 #if DMA_ON
   uint8_t i;
@@ -64,11 +67,17 @@ dma_isr(void) __interrupt(DMA_VECTOR)
     if((DMAIRQ & (1 << i)) != 0) {
       DMAIRQ = ~(1 << i);
 
-      if(i == 1){
-    	  DMA_ARM(0);
+      if(i == 1) {
+        DMA_ARM(0);
+        T2M0;
+        DMA_t2cap = (T2MOVF0 | (T2MOVF1 << 8) | (T2MOVF2 << 16));
+        DMA_sample_count++;
       }
-      if(i == 0){
-    	  DMA_ARM(1);
+      if(i == 0) {
+        DMA_ARM(1);
+        T2M0;
+        DMA_t2cap = (T2MOVF0 | (T2MOVF1 << 8) | (T2MOVF2 << 16));
+        DMA_sample_count++;
       }
 
       if(dma_callback[i] != 0) {

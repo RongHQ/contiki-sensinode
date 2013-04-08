@@ -41,7 +41,8 @@
 #include "net/packetbuf.h"
 #include "net/queuebuf.h"
 
-#include "sys/ctimer.h"
+//#include "sys/ctimer.h"
+#include "sys/rtimer.h"
 #include "sys/clock.h"
 
 #include "lib/random.h"
@@ -87,7 +88,7 @@ struct qbuf_metadata {
 struct neighbor_queue {
   struct neighbor_queue *next;
   rimeaddr_t addr;
-  struct ctimer transmit_timer;
+  struct rtimer transmit_timer;
   uint8_t transmissions;
   uint8_t collisions, deferrals;
   LIST_STRUCT(queued_packet_list);
@@ -107,7 +108,7 @@ MEMB(metadata_memb, struct qbuf_metadata, MAX_QUEUED_PACKETS);
 LIST(neighbor_list);
 
 static void packet_sent(void *ptr, int status, int num_transmissions);
-static void transmit_packet_list(void *ptr);
+static void transmit_packet_list(struct rtimer *rt, void *ptr);
 
 /* This shortcut is only meant to be used with sicslowmac and null RDC */
 #ifndef CSMA_SHORTCUT
@@ -149,7 +150,7 @@ default_timebase(void)
 }
 /*---------------------------------------------------------------------------*/
 static void
-transmit_packet_list(void *ptr)
+transmit_packet_list(struct rtimer *rt, void *ptr)
 {
   struct neighbor_queue *n = ptr;
   if(n) {
@@ -184,10 +185,10 @@ free_first_packet(struct neighbor_queue *n)
       n->collisions = 0;
       n->deferrals = 0;
       /* Set a timer for next transmissions */
-      ctimer_set(&n->transmit_timer, default_timebase(), transmit_packet_list, n);
+      rtimer_set(&n->transmit_timer, RTIMER_SECOND/500 + RTIMER_NOW(), 0, transmit_packet_list, n);
     } else {
       /* This was the last packet in the queue, we free the neighbor */
-      ctimer_stop(&n->transmit_timer);
+      //ctimer_stop(&n->transmit_timer);
       list_remove(neighbor_list, n);
       memb_free(&neighbor_memb, n);
     }
@@ -270,11 +271,11 @@ packet_sent(void *ptr, int status, int num_transmissions)
       backoff_transmissions = 3;
     }
 
-    time = time + (random_rand() % (backoff_transmissions * time));
+    time = (random_rand() % (backoff_transmissions * 64)) * 8 + 8;
 
     if(n->transmissions < metadata->max_transmissions) {
-      PRINTF("csma: retransmitting with time %lu %p\n", time, q);
-      ctimer_set(&n->transmit_timer, time,
+      PRINTF("csma: retransmitting with time %du %p\n", time, q);
+      rtimer_set(&n->transmit_timer, time + RTIMER_NOW(), 0,
                  transmit_packet_list, n);
       /* This is needed to correctly attribute energy that we spent
          transmitting this packet. */
@@ -356,7 +357,8 @@ send_packet(mac_callback_t sent, void *ptr)
 
             /* If q is the first packet in the neighbor's queue, send asap */
             if(list_head(n->queued_packet_list) == q) {
-              ctimer_set(&n->transmit_timer, 0, transmit_packet_list, n);
+              rtimer_set(&n->transmit_timer,
+                  RTIMER_NOW() + (random_rand()%64)*8+8, 0, transmit_packet_list, n);
             }
             return;
           }

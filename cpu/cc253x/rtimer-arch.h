@@ -51,7 +51,7 @@
  * 32 MHz clock, prescaled down to 500 kHz for all 4 timers in clock_init().
  * Further prescaled factor 32 for T1, thus T1 is 15625 Hz
  */
-#define RTIMER_ARCH_SECOND (15625U)
+#define RTIMER_ARCH_SECOND (15152U)
 
 #define rtimer_arch_now() ((T2M0 & 0x00) + T2MOVF0 + (T2MOVF1 << 8))
 

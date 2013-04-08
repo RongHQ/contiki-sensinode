@@ -55,11 +55,11 @@ AUTOSTART_PROCESSES(&example_abc_process);
 static void
 recv_uc(struct unicast_conn *c, const rimeaddr_t *from) {
   char* pbuf = (char *)packetbuf_dataptr();
+  uint8_t i;
   printf("unicast message received from %d.%d:", from->u8[0], from->u8[1]);
-
-  puthex(pbuf[2]);
-  puthex(pbuf[1]);
-  puthex(pbuf[0]);
+  for(i = 0; i < packetbuf_datalen(); i++){
+    puthex(*(pbuf++));
+  }
   putchar('\r');
   putchar('\n');
 }

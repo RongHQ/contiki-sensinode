@@ -101,6 +101,16 @@ packetbuf_copyfrom(const void *from, uint16_t len)
   return l;
 }
 /*---------------------------------------------------------------------------*/
+int
+packetbuf_appendfrom(const void *from, uint16_t len){
+  uint16_t l;
+
+  l = len > (PACKETBUF_SIZE-buflen)? (PACKETBUF_SIZE-buflen): len;
+  memcpy(packetbufptr + buflen, from, l);
+  buflen += l;
+  return l;
+}
+/*---------------------------------------------------------------------------*/
 void
 packetbuf_compact(void)
 {

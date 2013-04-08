@@ -104,7 +104,7 @@ send_packet(mac_callback_t sent, void *ptr)
 {
   uint8_t ret;
 #if NULLRDC_802154_AUTOACK
-  static int is_broadcast;
+  static char is_broadcast;
   static uint8_t dsn;
   static rtimer_clock_t wt;
   static uint8_t ackbuf[ACK_LEN];

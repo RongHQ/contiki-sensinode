@@ -20,18 +20,20 @@
 PROCESS(hello_world_process, "Hello world process");
 PROCESS(ADC_DMA_process, "ADC DMA process");
 AUTOSTART_PROCESSES(&hello_world_process, &ADC_DMA_process);
+const rimeaddr_t sink_addr = {{26, 51}};
 //extern process_event_t ADC_sensor_event;
 static struct etimer timer1;
-static uint16_t sample_count = 0, max_tstamp = 0;
+static uint8_t sample_count = 0;
+extern uint8_t DMA_sample_count;
+static uint16_t max_tstamp = 0;
 static int16_t sample_max = 0xFFFF;
 int16_t ADC_buffer_ping[256], ADC_buffer_pang[256];
 static int16_t *ADC_buffer;
+static uint16_t tmp_ptr;
 /*---------------------------------------------------------------------------*/
 PROCESS_THREAD(ADC_DMA_process, ev, data) {
   uint8_t i;
-  uint16_t tmp_ptr;
-  PROCESS_BEGIN()
-    ;
+  PROCESS_BEGIN();
 
     tmp_ptr = (uint16_t) (&ADC_buffer_ping[0]);
     dma_conf[0].src_h = 0x70;
@@ -55,8 +57,8 @@ PROCESS_THREAD(ADC_DMA_process, ev, data) {
 
     dma_associate_process(&ADC_DMA_process, 0);
     dma_associate_process(&ADC_DMA_process, 1);
-    DMA_ARM(0);
-    printf("DMA config OK");
+    //DMA_ARM(0);
+    //printf("DMA config OK");
 
     while (1) {
       PROCESS_WAIT_EVENT();
@@ -82,7 +84,6 @@ PROCESS_THREAD(ADC_DMA_process, ev, data) {
         }
         while (i);
         sample_count++;
-
       }
     }
 
@@ -99,19 +100,29 @@ static struct unicast_conn uc;
 
 static void
 abc_recv(struct abc_conn *c) {
-  //static uint32_t t2stamp;
+  static int32_t t2stamp;
   //static char hexword[7] = {0,0,0,0,0,0,0};
-  const rimeaddr_t addr = {{26, 51}};
-
+  static uint8_t do_once = 1;
   //T2M0;
-  //t2stamp = (T2MOVF0 | (T2MOVF1 << 8) | (T2MOVF2 << 16));
+
   DISABLE_INTERRUPTS();
-  T2MSEL = 0x09;
-  packetbuf_copyfrom((void *)&X_T2MOVF0, 3);
+  T2MSEL = 0x11;
+  t2stamp = DMA_t2cap - (T2MOVF0 | (T2MOVF1 << 8) | (T2MOVF2 << 16));
   T2MSEL = 0x00;
   ENABLE_INTERRUPTS();
-  unicast_send(&uc, &addr);
 
+  packetbuf_copyfrom((void *)&t2stamp, 4);
+  packetbuf_appendfrom(&sample_count,1);
+  packetbuf_appendfrom(&DMA_sample_count,1);
+  packetbuf_appendfrom(&max_tstamp,2);
+  unicast_send(&uc, &sink_addr);
+  max_tstamp = 0;
+  sample_max = 0;
+
+  if(do_once){
+    do_once = 0;
+    DMA_ARM(0);
+  }
 }
 static const struct abc_callbacks abc_call = { abc_recv };
 static struct abc_conn abc;
@@ -143,16 +154,12 @@ PROCESS_THREAD(hello_world_process, ev, data) {
       //putchar('h');
       //putchar((unsigned char)(sample_count>>8));
       //putchar((unsigned char)sample_count);
-      sample_count = 0;
-      max_tstamp = 0;
-      sample_max = 0;
+      //sample_count = 0;
+      //max_tstamp = 0;
+      //sample_max = 0;
       leds_toggle(LEDS_GREEN);
       //leds_off(LEDS_GREEN);
-      packetbuf_copyfrom("!!!!", 5);
 
-      if (!rimeaddr_cmp(&addr, &rimeaddr_node_addr)) {
-        unicast_send(&uc, &addr);
-      }
       etimer_reset(&timer1);
     }
 

@@ -250,6 +250,22 @@ void packetbuf_compact(void);
 int packetbuf_copyfrom(const void *from, uint16_t len);
 
 /**
+ * \brief      Copy and append from external data into the packetbuf
+ * \param from A pointer to the data from which to copy
+ * \param len  The size of the data to copy
+ * \retval     The number of bytes that was copied into the packetbuf
+ *
+ *             This function copies data from a pointer into the
+ *             packetbuf. If the data that is to be copied is larger
+ *             than the remained space in packetbuf, only the data that fits in the
+ *             packetbuf is copied. The number of bytes that could be
+ *             copied into the rimbuf is returned.
+ *
+ */
+
+int packetbuf_appendfrom(const void *from, uint16_t len);
+
+/**
  * \brief      Copy the entire packetbuf to an external buffer
  * \param to   A pointer to the buffer to which the data is to be copied
  * \retval     The number of bytes that was copied to the external buffer
