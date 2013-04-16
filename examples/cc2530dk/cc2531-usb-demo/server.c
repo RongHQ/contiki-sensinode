@@ -56,7 +56,10 @@ static void
 recv_uc(struct unicast_conn *c, const rimeaddr_t *from) {
   char* pbuf = (char *)packetbuf_dataptr();
   uint8_t i;
-  printf("unicast message received from %d.%d:", from->u8[0], from->u8[1]);
+  //printf("unicast message received from %d.%d:", from->u8[0], from->u8[1]);
+  puthex(from->u8[0]);
+  puthex(from->u8[1]);
+  putchar(':');
   for(i = 0; i < packetbuf_datalen(); i++){
     puthex(*(pbuf++));
   }
@@ -95,7 +98,7 @@ PROCESS_THREAD(example_abc_process, ev, data)
 
     packetbuf_copyfrom("Sync!", 6);
     abc_send(&abc);
-    printf("abc Sync sent\r\n");
+    printf("Sync\r\n");
 
     etimer_reset(&et);
 

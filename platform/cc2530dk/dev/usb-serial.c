@@ -46,6 +46,7 @@
 #include "usb/common/cdc-acm/cdc-acm.h"
 #include "usb/common/usb.h"
 #include "usb/common/usb-arch.h"
+#include "dev/leds.h"
 /*---------------------------------------------------------------------------*/
 static const struct {
   uint8_t size;
@@ -214,6 +215,11 @@ usb_serial_writeb(uint8_t b)
 {
   if(!enabled) {
     buffered_data = 0;
+    return;
+  }
+
+  if(!(usb_cdc_acm_get_line_state() & 0x01)){
+    leds_toggle(LEDS_RED);
     return;
   }
 

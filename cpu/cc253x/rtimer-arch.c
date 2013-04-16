@@ -103,7 +103,7 @@ rtimer_isr(void) __interrupt(T2_VECTOR) {
   ENERGEST_ON(ENERGEST_TYPE_IRQ);
 
   /* No more interrupts from Channel 1 till next rtimer_arch_schedule() call */
-  T2IRQF = 0x00;
+  //T2IRQF = 0x00;
   T2IRQM = 0x00;
 
   rtimer_run_next();

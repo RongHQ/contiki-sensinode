@@ -51,7 +51,6 @@
 #undef LEDS_GREEN
 #undef LEDS_YELLOW
 #undef LEDS_RED
-#define LEDS_YELLOW 4
 
 /*
  * Smart RF LEDs
@@ -81,22 +80,24 @@
 #define USB_CONF_CLASS	1 /* CDC-ACM */
 #endif
 
-#undef LEDS_CONF_ALL
-#define LEDS_CONF_ALL 3
-#define LEDS_RED      1
-#define LEDS_GREEN    2
+#define LEDS_GREEN    1
+#define LEDS_YELLOW   2
+#define LEDS_RED      4
 
 /* H/W Connections */
-#define LED2_PIN   P0_0
-#define LED1_PIN   P1_1
+#define LED1_PIN   P1_0
+#define LED2_PIN   P1_1
+#define LED3_PIN   P2_0
 
 /* P0DIR and P0SEL masks */
-#define LED2_MASK  0x01
-#define LED1_MASK  0x02
+#define LED1_MASK  0x01
+#define LED2_MASK  0x02
+#define LED3_MASK  0x01
 #else
 #define MODEL_STRING "TI SmartRF05 EB\n"
 #define LEDS_GREEN    2
 #define LEDS_RED      1
+#define LEDS_YELLOW   4
 
 /* H/W Connections */
 #define LED1_PIN   P1_0

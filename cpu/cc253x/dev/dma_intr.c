@@ -19,7 +19,7 @@
 #if DMA_ON
 extern struct process *dma_callback[DMA_CHANNEL_COUNT];
 volatile uint8_t DMA_sample_count = 0;
-volatile uint32_t DMA_t2cap = 0xFFFFFFFF;
+volatile int32_t DMA_t2cap = 0xFFFFFFFF;
 #endif
 
 /*---------------------------------------------------------------------------*/
@@ -47,7 +47,7 @@ __interrupt(DMA_VECTOR)
 #if DMA_ON
   uint8_t i;
 #endif
-  EA = 0;
+  DISABLE_INTERRUPTS();
   DMAIF = 0;
 #ifdef HAVE_RF_DMA
   if((DMAIRQ & 1) != 0) {
@@ -73,7 +73,7 @@ __interrupt(DMA_VECTOR)
         DMA_t2cap = (T2MOVF0 | (T2MOVF1 << 8) | (T2MOVF2 << 16));
         DMA_sample_count++;
       }
-      if(i == 0) {
+      else if(i == 0) {
         DMA_ARM(1);
         T2M0;
         DMA_t2cap = (T2MOVF0 | (T2MOVF1 << 8) | (T2MOVF2 << 16));
@@ -86,7 +86,7 @@ __interrupt(DMA_VECTOR)
     }
   }
 #endif
-  EA = 1;
+  ENABLE_INTERRUPTS();
 }
 #pragma restore
 /*---------------------------------------------------------------------------*/

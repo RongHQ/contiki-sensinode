@@ -92,7 +92,7 @@ const struct configuration_st {
       0x81,
       0x03,
       USB_EP1_SIZE,
-      255 /* 255ms polling, not really used so maximum value used */
+      255 /* 32ms polling, not really used so maximum value used */
     },
     {
       sizeof(configuration_block.data),

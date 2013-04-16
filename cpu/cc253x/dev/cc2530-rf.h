@@ -119,10 +119,12 @@
 } while(0)
 /*---------------------------------------------------------------------------*/
 extern const struct radio_driver cc2530_rf_driver;
+extern volatile int32_t SFD_T2cap;
 /*---------------------------------------------------------------------------*/
 int8_t cc2530_rf_channel_set(uint8_t channel);
 #define cc2530_rf_channel_get() ((uint8_t)((FREQCTRL + 44) / 5))
 uint8_t cc2530_rf_power_set(uint8_t new_power);
 void cc2530_rf_set_addr(uint16_t pan);
+void RF_isr(void) __interrupt(RF_VECTOR);
 /*---------------------------------------------------------------------------*/
 #endif /* __CC2530_RF_H__ */

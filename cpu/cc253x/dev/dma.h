@@ -123,7 +123,7 @@ typedef struct dma_config {
 #if DMA_ON
 #define DMA_CHANNEL_COUNT 3
 extern dma_config_t dma_conf[DMA_CHANNEL_COUNT];
-extern volatile uint32_t DMA_t2cap;
+extern volatile int32_t DMA_t2cap;
 volatile extern uint8_t DMA_sample_count;
 #endif
 

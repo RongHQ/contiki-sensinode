@@ -10,6 +10,7 @@
 #include "dev/adc-sensor.h"
 #include "dev/leds.h"
 #include "dev/dma.h"
+#include "dev/cc2530-rf.h"
 #include "contiki-lib.h"
 #include "net/rime.h"
 #include "cc253x.h"
@@ -101,18 +102,19 @@ static void
 abc_recv(struct abc_conn *c) {
   static int32_t t2stamp;
   //static char hexword[7] = {0,0,0,0,0,0,0};
-  static uint8_t do_once = 1;
+  static uint8_t do_once = 1, DMA_sample_count_cap;
   //T2M0;
 
   DISABLE_INTERRUPTS();
   T2MSEL = 0x11;
-  t2stamp = DMA_t2cap - (T2MOVF0 | (T2MOVF1 << 8) | (T2MOVF2 << 16));
+  t2stamp = DMA_t2cap - SFD_T2cap;
   T2MSEL = 0x00;
+  DMA_sample_count_cap = DMA_sample_count;
   ENABLE_INTERRUPTS();
 
   packetbuf_copyfrom((void *)&t2stamp, 4);
   packetbuf_appendfrom(&sample_count,1);
-  packetbuf_appendfrom(&DMA_sample_count,1);
+  packetbuf_appendfrom(&DMA_sample_count_cap,1);
   packetbuf_appendfrom(&max_tstamp,2);
   unicast_send(&uc, &sink_addr);
   max_tstamp = 0;
