@@ -171,6 +171,18 @@ do_work(void)
     enabled = 0;
   }
 
+  events = usb_cdc_acm_get_events();
+  if(events & USB_CDC_ACM_LINE_STATE) {
+    uint8_t line_state = usb_cdc_acm_get_line_state();
+    if(line_state == USB_CDC_ACM_DTE) {
+      enabled = 1;
+      leds_on(LEDS_GREEN);
+    } else {
+      enabled = 0;
+      leds_off(LEDS_GREEN);
+    }
+  }
+
   if(!enabled) {
     return;
   }
@@ -218,11 +230,6 @@ usb_serial_writeb(uint8_t b)
     return;
   }
 
-  if(!(usb_cdc_acm_get_line_state() & 0x01)){
-    leds_toggle(LEDS_RED);
-    return;
-  }
-
   usb_tx_data[buffered_data] = b;
   buffered_data++;
 
@@ -260,6 +267,7 @@ PROCESS_THREAD(usb_serial_process, ev, data)
   usb_setup();
   usb_cdc_acm_setup();
   usb_set_global_event_process(&usb_serial_process);
+  usb_cdc_acm_set_event_process(&usb_serial_process);
   usb_set_ep_event_process(EPIN, &usb_serial_process);
   usb_set_ep_event_process(EPOUT, &usb_serial_process);
 

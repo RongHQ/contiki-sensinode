@@ -271,7 +271,7 @@ packet_sent(void *ptr, int status, int num_transmissions)
       backoff_transmissions = 3;
     }
 
-    time = (random_rand() % (backoff_transmissions * 64)) * 8 + 8;
+    time = (random_rand() % (backoff_transmissions * 64)) * 20 + 8;
 
     if(n->transmissions < metadata->max_transmissions) {
       PRINTF("csma: retransmitting with time %du %p\n", time, q);
@@ -358,7 +358,7 @@ send_packet(mac_callback_t sent, void *ptr)
             /* If q is the first packet in the neighbor's queue, send asap */
             if(list_head(n->queued_packet_list) == q) {
               rtimer_set(&n->transmit_timer,
-                  RTIMER_NOW() + (random_rand()%64)*8+8, 0, transmit_packet_list, n);
+                  RTIMER_NOW() + (random_rand()%64)*20+8, 0, transmit_packet_list, n);
             }
             return;
           }
